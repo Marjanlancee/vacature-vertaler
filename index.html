@@ -9,7 +9,6 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.js"></script>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
@@ -33,21 +32,30 @@ const INK = "#16233A";
 const PAPER = "#F7F5F0";
 const SAGE = "#4F7863";
 
-function Icon({ name, size = 16, color = "currentColor", style = {} }) {
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    if (ref.current && window.lucide) {
-      ref.current.innerHTML = "";
-      const svg = window.lucide.createElement(window.lucide.icons[name]);
-      if (svg) {
-        svg.setAttribute("width", size);
-        svg.setAttribute("height", size);
-        svg.setAttribute("stroke", color);
-        ref.current.appendChild(svg);
-      }
-    }
-  }, [name, size, color]);
-  return <span ref={ref} style={{ display: "inline-flex", ...style }} />;
+const ICON_PATHS = {
+  sparkles: "M12 3l1.8 4.9L18 9.5l-4.2 1.6L12 16l-1.8-4.9L6 9.5l4.2-1.6L12 3z M19 13l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z",
+  "loader-2": "M12 2a10 10 0 1 0 10 10",
+  "arrow-right": "M5 12h14 M13 6l6 6-6 6",
+  users: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
+  mail: "M4 4h16v16H4z M22 6l-10 7L2 6",
+};
+
+function Icon({ name, size = 16, color = "currentColor", spin = false, style = {} }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ display: "inline-block", flexShrink: 0, animation: spin ? "spin 1s linear infinite" : "none", ...style }}
+    >
+      <path d={ICON_PATHS[name] || ""} />
+    </svg>
+  );
 }
 
 function SkillBlock({ title, items, color }) {
@@ -151,7 +159,7 @@ function App() {
             opacity: !vacatureText.trim() ? 0.5 : 1,
           }}
         >
-          <Icon name={loading ? "loader-2" : "sparkles"} size={17} color="#fff" style={loading ? { className: "spin" } : {}} />
+          <Icon name={loading ? "loader-2" : "sparkles"} size={17} color="#fff" spin={loading} />
           {loading ? "Analyseren..." : "Analyseer vacature"}
         </button>
 
