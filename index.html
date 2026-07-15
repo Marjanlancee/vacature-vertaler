@@ -107,17 +107,18 @@ function MatchCard({ t }) {
             <strong style={{ color: SAGE }}>
               {t.overstap_type === "opleiding" ? "Opleiding nodig" : "Coaching op de vloer"}
             </strong>
-            {t.cursus && t.cursus_url ? (
+            {t.overstap_type === "opleiding" && (
               <React.Fragment>
                 {": "}
-                <a href={t.cursus_url} target="_blank" rel="noopener noreferrer" style={{ color: SAGE, textDecoration: "underline" }}>
-                  {t.cursus}
+                <a
+                  href={`https://www.leeroverzicht.nl/leren/zoeken?zoekterm=${encodeURIComponent(t.beroep)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: SAGE, textDecoration: "underline" }}
+                >
+                  zoek opleiding op Leeroverzicht
                 </a>
               </React.Fragment>
-            ) : t.cursus ? (
-              `: ${t.cursus}`
-            ) : (
-              ""
             )}
           </span>
         </div>
@@ -222,7 +223,7 @@ function App() {
           }}
         >
           <Icon name={loading ? "loader-2" : "sparkles"} size={17} color="#fff" spin={loading} />
-          {loading ? "Analyseren, dit kan tot 60 sec duren..." : "Analyseer vacature"}
+          {loading ? "Analyseren..." : "Analyseer vacature"}
         </button>
 
         {error && <p style={{ color: "#B03A2E", marginTop: 16, fontSize: 14 }}>{error}</p>}
