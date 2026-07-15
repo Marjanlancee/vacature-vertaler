@@ -21,7 +21,7 @@ Gebruik de websearch-tool om voor elk transferable beroep waar "opleiding" bij h
 
 Gebruik nooit een liggend streepje (em dash, "—") in je tekst. Gebruik gewone punten en komma's.
 
-Geef als allerlaatste bericht uitsluitend geldige JSON terug, zonder markdown-codeblokken, zonder tekst ervoor of erna. Structuur:
+Geef als allerlaatste bericht uitsluitend geldige JSON terug. Begin dat laatste bericht direct met het teken { en eindig met het teken }. Voeg geen inleidende zin toe zoals "Ik heb nu..." of "Hier is de analyse", geen markdown-codeblokken, geen tekst erna. Structuur:
 
 {
   "functietitel": "korte herkenbare titel van de functie uit de vacature",
@@ -40,7 +40,7 @@ Geef als allerlaatste bericht uitsluitend geldige JSON terug, zonder markdown-co
   "transferable_verrassend": [
     { "zelfde structuur als hierboven, maar 4 beroepen uit een heel ander vakgebied die toch verrassend sterk overlappen in kernvaardigheden" }
   ],
-  "cta_tekst": "korte tekst (max 50 woorden), informele directe toon, geen bedrijfsnaam. Noem kort iets herkenbaars uit de vacature, benoem dan dat het uitzoeken van al deze kandidaten veel werk is, en nodig uit tot contact voor een gratis tool die de vacature herschrijft voor bredere doelgroepen."
+  "cta_tekst": "korte tekst (max 50 woorden), informele directe toon. Noem kort iets herkenbaars uit de vacature, benoem dan dat het uitzoeken van al deze kandidaten veel werk is, en nodig uit tot contact met NLwerktaanwerk voor een gratis tool die de vacature herschrijft voor bredere doelgroepen."
 }
 
 Geef exact 4 items in transferable_dichtbij (beroepen die logisch dicht bij de functie liggen) en exact 4 items in transferable_verrassend (onverwachte beroepen uit een ander vakgebied met verrassend veel skill-overlap, zoals een nagelstyliste met de handvaardigheid en precisie van een lasser). Sorteer beide lijsten van hoog naar laag percentage. De werkenden_nl schattingen zijn indicatief, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
@@ -75,7 +75,13 @@ ${vacatureText}
     const data = await response.json();
     const textBlocks = (data.content || []).filter((b) => b.type === "text");
     const raw = (textBlocks[textBlocks.length - 1]?.text || "").trim();
-    const clean = raw.replace(/^```json\s*|^```\s*|```$/gm, "").trim();
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start === -1 || end === -1) {
+      res.status(500).json({ error: "Analyse mislukt", detail: "Geen JSON gevonden in antwoord", raw });
+      return;
+    }
+    const clean = raw.slice(start, end + 1);
     const parsed = JSON.parse(clean);
 
     res.status(200).json(parsed);
