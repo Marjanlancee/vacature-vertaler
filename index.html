@@ -107,7 +107,18 @@ function MatchCard({ t }) {
             <strong style={{ color: SAGE }}>
               {t.overstap_type === "opleiding" ? "Opleiding nodig" : "Coaching op de vloer"}
             </strong>
-            {t.cursus ? `: ${t.cursus}` : ""}
+            {t.cursus && t.cursus_url ? (
+              <React.Fragment>
+                {": "}
+                <a href={t.cursus_url} target="_blank" rel="noopener noreferrer" style={{ color: SAGE, textDecoration: "underline" }}>
+                  {t.cursus}
+                </a>
+              </React.Fragment>
+            ) : t.cursus ? (
+              `: ${t.cursus}`
+            ) : (
+              ""
+            )}
           </span>
         </div>
       )}
@@ -149,8 +160,11 @@ function App() {
     <div style={{ background: PAPER, minHeight: "100vh", color: INK }}>
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px" }}>
         <header style={{ marginBottom: 36 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: INK, marginBottom: 20, letterSpacing: "0.02em" }}>
-            NLwerktaanwerk
+          <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 24, letterSpacing: "0.01em" }}>
+            <span style={{ color: ACCENT }}>NL</span>
+            <span style={{ color: INK }}>werkt</span>
+            <span style={{ color: ACCENT, borderBottom: `3px solid ${ACCENT}`, paddingBottom: 1 }}>aan</span>
+            <span style={{ color: INK }}>werk</span>
           </div>
           <div className="mono" style={{ fontSize: 12, letterSpacing: "0.08em", color: ACCENT, marginBottom: 10, textTransform: "uppercase" }}>
             Vacature-skillsanalyse
@@ -161,12 +175,15 @@ function App() {
           <p style={{ fontSize: 16, lineHeight: 1.6, color: "#4A5568", marginTop: 14, maxWidth: 560 }}>
             Naast diploma's vraagt elke vacature ook om skills. Deze tool laat zien welke skills er echt achter je functie zitten, welke andere beroepen dezelfde mensen aantrekken, en hoe je zo meer mensen bereikt.
           </p>
+          <div style={{ marginTop: 20, background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "14px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568", maxWidth: 560 }}>
+            Op een cv zie je goed wat iemand heeft gedaan. Wat iemand kan en wil, staat er niet in, dat zit in skills. Daarom kijkt deze analyse naar skills in plaats van alleen naar diploma's of werkervaring.
+          </div>
         </header>
 
         <textarea
           value={vacatureText}
           onChange={(e) => setVacatureText(e.target.value)}
-          placeholder="Plak hier de volledige vacaturetekst..."
+          placeholder="Plak hier je volledige vacaturetekst, of voer alleen de functienaam in (bv. 'Monteur Elektrotechniek')..."
           rows={9}
           style={{
             width: "100%",
