@@ -136,30 +136,37 @@ function App() {
 
   return (
     <div style={{ background: PAPER, minHeight: "100vh", color: INK }}>
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px" }}>
-        <header style={{ marginBottom: 36 }}>
+      <div style={{ background: ACCENT, color: "#fff", textAlign: "center", padding: "10px 20px", fontSize: 13, fontWeight: 600 }}>
+        Een initiatief van NLwerktaanwerk, voor werkgevers met personeelsvragen
+      </div>
+      <div style={{ background: INK, padding: "32px 20px 56px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
           <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 24, letterSpacing: "0.01em" }}>
             <span style={{ color: ACCENT }}>NL</span>
-            <span style={{ color: INK }}>werkt</span>
+            <span style={{ color: "#fff" }}>werkt</span>
             <span style={{ color: ACCENT, borderBottom: `3px solid ${ACCENT}`, paddingBottom: 1 }}>aan</span>
-            <span style={{ color: INK }}>werk</span>
+            <span style={{ color: "#fff" }}>werk</span>
           </div>
           <div className="mono" style={{ fontSize: 12, letterSpacing: "0.08em", color: ACCENT, marginBottom: 10, textTransform: "uppercase" }}>
             Vacature Vertaler
           </div>
-          <h1 className="display" style={{ fontSize: "clamp(28px, 5vw, 40px)", fontWeight: 700, lineHeight: 1.15, margin: 0 }}>
+          <h1 className="display" style={{ fontSize: "clamp(28px, 5vw, 40px)", fontWeight: 700, lineHeight: 1.15, margin: 0, color: "#fff" }}>
             Plak je vacature. Ontdek wie er nog meer geschikt is.
           </h1>
-          <p style={{ fontSize: 16, lineHeight: 1.6, color: "#4A5568", marginTop: 14, maxWidth: 560 }}>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: "#D6DCEC", marginTop: 14, maxWidth: 560 }}>
             Naast diploma's vraagt een functie ook om vaardigheden. Dit hulpmiddeltje laat zien welke skills er bij jouw vacature horen, wie er nog meer geschikt is, en hoe je zo een bredere groep kan aanspreken.
           </p>
-          <div style={{ marginTop: 20, background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "14px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568", maxWidth: 560 }}>
+        </div>
+      </div>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 20px 80px" }}>
+        <div style={{ marginTop: -32 }}>
+          <div style={{ background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "14px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568", maxWidth: 560, boxShadow: "0 4px 16px rgba(28,58,144,0.08)" }}>
             Op een cv zie je goed wat iemand heeft gedaan. Wat iemand kan en wil, staat er veelal niet in, dat zit in skills. Daarom kijkt deze analyse naar skills in plaats van alleen naar diploma's of werkervaring.
           </div>
           <div style={{ marginTop: 12, background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "14px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568", maxWidth: 560 }}>
             Zodra je weet welke skills bij de functie horen, kun je de vacaturetekst daarop aanscherpen. Benoem die skills gericht in plaats van alleen een functietitel of diploma-eis, zo spreek je vanzelf een bredere doelgroep aan.
           </div>
-        </header>
+        </div>
 
         <textarea
           value={vacatureText}
