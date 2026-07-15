@@ -107,19 +107,7 @@ function MatchCard({ t }) {
             <strong style={{ color: SAGE }}>
               {t.overstap_type === "opleiding" ? "Opleiding nodig" : "Coaching op de vloer"}
             </strong>
-            {t.overstap_type === "opleiding" && (
-              <React.Fragment>
-                {": "}
-                <a
-                  href={`https://www.leeroverzicht.nl/leren/zoeken?zoekterm=${encodeURIComponent(t.beroep)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: SAGE, textDecoration: "underline" }}
-                >
-                  zoek opleiding op Leeroverzicht
-                </a>
-              </React.Fragment>
-            )}
+            {t.overstap_uitleg ? `: ${t.overstap_uitleg}` : ""}
           </span>
         </div>
       )}
@@ -266,6 +254,10 @@ function App() {
                 {result.transferable_verrassend?.map((t, i) => (
                   <MatchCard key={i} t={t} />
                 ))}
+              </div>
+
+              <div style={{ marginTop: 20, background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "16px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568" }}>
+                Omdat de arbeidsmarkt structureel krap is, loont het om breder te kijken naar kandidaten uit andere vakgebieden. Zij moeten daarvoor vaak nog wel een cursus of training volgen, daar zijn onder andere de ontwikkelpaden op <a href="https://www.leeroverzicht.nl" target="_blank" rel="noopener noreferrer" style={{ color: SAGE, textDecoration: "underline" }}>Leeroverzicht.nl</a> voor. Neem contact op met de regisseur en vraag om advies.
               </div>
             </div>
 
