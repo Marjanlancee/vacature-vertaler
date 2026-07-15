@@ -1,85 +1,262 @@
-export const config = {
-  maxDuration: 60,
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vacature-skillsanalyse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+  .display { font-family: 'Fraunces', serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  textarea:focus, button:focus-visible { outline: 2px solid #C97A2B; outline-offset: 2px; }
+  .fade-in { animation: fadeIn 0.5s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+const ACCENT = "#C97A2B";
+const INK = "#16233A";
+const PAPER = "#F7F5F0";
+const SAGE = "#4F7863";
+
+const ICON_PATHS = {
+  sparkles: "M12 3l1.8 4.9L18 9.5l-4.2 1.6L12 16l-1.8-4.9L6 9.5l4.2-1.6L12 3z M19 13l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z",
+  "loader-2": "M12 2a10 10 0 1 0 10 10",
+  "arrow-right": "M5 12h14 M13 6l6 6-6 6",
+  users: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
+  mail: "M4 4h16v16H4z M22 6l-10 7L2 6",
+  "graduation-cap": "M22 10L12 5 2 10l10 5 10-5z M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5",
+  handshake: "M11 17l-4-4 4-4 M9 13h10 M13 7l4 4-4 4",
 };
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Alleen POST toegestaan" });
-    return;
-  }
-
-  const { vacatureText } = req.body || {};
-
-  if (!vacatureText || !vacatureText.trim()) {
-    res.status(400).json({ error: "Geen vacaturetekst meegegeven" });
-    return;
-  }
-
-  const prompt = `Je bent een arbeidsmarktanalist. Analyseer onderstaande vacaturetekst.
-
-Gebruik de websearch-tool om voor elk transferable beroep waar "opleiding" bij hoort een bestaande, actuele Nederlandse cursus of opleiding op te zoeken. Verzin nooit een cursusnaam of aanbieder. Als je via websearch niets bruikbaars vindt, laat het veld "cursus" dan leeg.
-
-Gebruik nooit een liggend streepje (em dash, "—") in je tekst. Gebruik gewone punten en komma's.
-
-Geef als allerlaatste bericht uitsluitend geldige JSON terug, zonder markdown-codeblokken, zonder tekst ervoor of erna. Structuur:
-
-{
-  "functietitel": "korte herkenbare titel van de functie uit de vacature",
-  "hard_skills": ["skill 1", "skill 2", "skill 3", "skill 4", "skill 5"],
-  "soft_skills": ["skill 1", "skill 2", "skill 3", "skill 4", "skill 5"],
-  "transferable_dichtbij": [
-    {
-      "beroep": "naam ander beroep",
-      "percentage": 82,
-      "uitleg": "één korte zin (max 15 woorden) waarom de skills overlappen",
-      "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'",
-      "overstap_type": "coaching of opleiding",
-      "cursus": "naam + aanbieder van een echt bestaande cursus/opleiding, alleen invullen bij overstap_type opleiding en alleen als via websearch gevonden, anders leeg"
-    }
-  ],
-  "transferable_verrassend": [
-    { "zelfde structuur als hierboven, maar 4 beroepen uit een heel ander vakgebied die toch verrassend sterk overlappen in kernvaardigheden" }
-  ],
-  "cta_tekst": "korte tekst (max 50 woorden), informele directe toon, geen bedrijfsnaam. Noem kort iets herkenbaars uit de vacature, benoem dan dat het uitzoeken van al deze kandidaten veel werk is, en nodig uit tot contact voor een gratis tool die de vacature herschrijft voor bredere doelgroepen."
+function Icon({ name, size = 16, color = "currentColor", spin = false, style = {} }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ display: "inline-block", flexShrink: 0, animation: spin ? "spin 1s linear infinite" : "none", ...style }}
+    >
+      <path d={ICON_PATHS[name] || ""} />
+    </svg>
+  );
 }
 
-Geef exact 4 items in transferable_dichtbij (beroepen die logisch dicht bij de functie liggen) en exact 4 items in transferable_verrassend (onverwachte beroepen uit een ander vakgebied met verrassend veel skill-overlap, zoals een nagelstyliste met de handvaardigheid en precisie van een lasser). Sorteer beide lijsten van hoog naar laag percentage. De werkenden_nl schattingen zijn indicatief, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
-
-Vacaturetekst:
-"""
-${vacatureText}
-"""`;
-
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 4000,
-        messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      res.status(502).json({ error: "Anthropic API fout", detail: errText });
-      return;
-    }
-
-    const data = await response.json();
-    const textBlocks = (data.content || []).filter((b) => b.type === "text");
-    const raw = (textBlocks[textBlocks.length - 1]?.text || "").trim();
-    const clean = raw.replace(/^```json\s*|^```\s*|```$/gm, "").trim();
-    const parsed = JSON.parse(clean);
-
-    res.status(200).json(parsed);
-  } catch (err) {
-    res.status(500).json({ error: "Analyse mislukt", detail: String(err) });
-  }
+function SkillBlock({ title, items, color }) {
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "18px 20px" }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+        {title}
+      </div>
+      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 7 }}>
+        {items?.map((s, i) => (
+          <li key={i} style={{ fontSize: 14.5, display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <span style={{ color, marginTop: 5, fontSize: 8 }}>●</span>
+            {s}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
+
+function MatchCard({ t }) {
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "18px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <div className="mono" style={{ fontSize: 26, fontWeight: 600, color: ACCENT, minWidth: 64, textAlign: "right" }}>
+          {t.percentage}%
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 16 }}>
+            <Icon name="arrow-right" size={15} color="#B0AB9E" />
+            {t.beroep}
+          </div>
+          <div style={{ fontSize: 13.5, color: "#6B7280", marginTop: 3 }}>{t.uitleg}</div>
+        </div>
+        <div style={{ textAlign: "right", fontSize: 12.5, color: "#8A8478", whiteSpace: "nowrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
+            <Icon name="users" size={13} />
+            <span className="mono">{t.werkenden_nl}</span>
+          </div>
+          <div>werkzaam in NL</div>
+        </div>
+      </div>
+      {t.overstap_type && (
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #F0EEE7", fontSize: 13, display: "flex", alignItems: "flex-start", gap: 8 }}>
+          <Icon name={t.overstap_type === "opleiding" ? "graduation-cap" : "handshake"} size={14} color={SAGE} style={{ marginTop: 2 }} />
+          <span>
+            <strong style={{ color: SAGE }}>
+              {t.overstap_type === "opleiding" ? "Opleiding nodig" : "Coaching op de vloer"}
+            </strong>
+            {t.cursus ? `: ${t.cursus}` : ""}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [vacatureText, setVacatureText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+
+  async function analyseer() {
+    if (!vacatureText.trim()) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const response = await fetch("/api/analyse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vacatureText }),
+      });
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error(errBody.error || "Analyse mislukt");
+      }
+      const parsed = await response.json();
+      setResult(parsed);
+    } catch (e) {
+      setError("Er ging iets mis bij het analyseren. Probeer het opnieuw.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ background: PAPER, minHeight: "100vh", color: INK }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px" }}>
+        <header style={{ marginBottom: 36 }}>
+          <div className="mono" style={{ fontSize: 12, letterSpacing: "0.08em", color: ACCENT, marginBottom: 10, textTransform: "uppercase" }}>
+            Vacature-skillsanalyse
+          </div>
+          <h1 className="display" style={{ fontSize: "clamp(28px, 5vw, 40px)", fontWeight: 600, lineHeight: 1.1, margin: 0 }}>
+            Plak je vacature. Ontdek wie er nog meer geschikt is.
+          </h1>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: "#4A5568", marginTop: 14, maxWidth: 560 }}>
+            Naast diploma's vraagt elke vacature ook om skills. Deze tool laat zien welke skills er echt achter je functie zitten, welke andere beroepen dezelfde mensen aantrekken, en hoe je zo meer mensen bereikt.
+          </p>
+        </header>
+
+        <textarea
+          value={vacatureText}
+          onChange={(e) => setVacatureText(e.target.value)}
+          placeholder="Plak hier de volledige vacaturetekst..."
+          rows={9}
+          style={{
+            width: "100%",
+            border: "1.5px solid #D8D3C8",
+            borderRadius: 10,
+            padding: 16,
+            fontSize: 15,
+            fontFamily: "inherit",
+            lineHeight: 1.5,
+            resize: "vertical",
+            background: "#fff",
+            color: INK,
+          }}
+        />
+
+        <button
+          onClick={analyseer}
+          disabled={loading || !vacatureText.trim()}
+          style={{
+            marginTop: 14,
+            background: loading ? "#B8895A" : ACCENT,
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            padding: "13px 24px",
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: loading || !vacatureText.trim() ? "default" : "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            opacity: !vacatureText.trim() ? 0.5 : 1,
+          }}
+        >
+          <Icon name={loading ? "loader-2" : "sparkles"} size={17} color="#fff" spin={loading} />
+          {loading ? "Analyseren, dit kan tot 30 sec duren..." : "Analyseer vacature"}
+        </button>
+
+        {error && <p style={{ color: "#B03A2E", marginTop: 16, fontSize: 14 }}>{error}</p>}
+
+        {result && (
+          <div className="fade-in" style={{ marginTop: 48 }}>
+            <div className="mono" style={{ fontSize: 12, color: "#8A8478", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
+              Analyse van
+            </div>
+            <h2 className="display" style={{ fontSize: 24, fontWeight: 600, margin: "0 0 28px" }}>
+              {result.functietitel}
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 40 }}>
+              <SkillBlock title="Hard skills" items={result.hard_skills} color={INK} />
+              <SkillBlock title="Soft skills" items={result.soft_skills} color={SAGE} />
+            </div>
+
+            <div style={{ marginBottom: 40 }}>
+              <h3 className="display" style={{ fontSize: 19, fontWeight: 600, marginBottom: 4 }}>
+                Wie kan deze functie nog meer aan?
+              </h3>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 18 }}>
+                Op basis van skill-overlap met andere beroepen.
+              </p>
+
+              <div className="mono" style={{ fontSize: 12, color: "#8A8478", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>
+                Dichtbij de vacature
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
+                {result.transferable_dichtbij?.map((t, i) => (
+                  <MatchCard key={i} t={t} />
+                ))}
+              </div>
+
+              <div className="mono" style={{ fontSize: 12, color: "#8A8478", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>
+                Verrassende matches
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {result.transferable_verrassend?.map((t, i) => (
+                  <MatchCard key={i} t={t} />
+                ))}
+              </div>
+            </div>
+
+            <div style={{ background: INK, color: PAPER, borderRadius: 12, padding: "26px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+              <Icon name="mail" size={20} color={ACCENT} style={{ marginTop: 3, flexShrink: 0 }} />
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6 }}>{result.cta_tekst}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
