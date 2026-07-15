@@ -1,5 +1,5 @@
 export const config = {
-  maxDuration: 120,
+  maxDuration: 30,
 };
 
 export default async function handler(req, res) {
@@ -19,13 +19,11 @@ export default async function handler(req, res) {
 
 Als de invoer alleen een functienaam is (geen volledige vacaturetekst), baseer je de analyse dan op wat gebruikelijk hoort bij die functie in Nederland.
 
-Gebruik de websearch-tool om voor elk transferable beroep waar "opleiding" bij hoort een bestaande, actuele Nederlandse cursus of opleiding op te zoeken, inclusief de directe URL van de aanbieder. Verzin nooit een cursusnaam, aanbieder of link. Belangrijk: als je via websearch geen cursus met een echte, werkende URL vindt, zet overstap_type dan op "coaching" in plaats van "opleiding", en laat "cursus" en "cursus_url" leeg. Gebruik "opleiding" dus alleen als je ook echt een cursus_url hebt gevonden.
-
 Kies bij de transferable beroepen bij voorkeur beroepen met een substantiële beroepsbevolking in Nederland (liever te veel dan te weinig potentiele kandidaten), zodat een werkgever er ook daadwerkelijk mensen kan werven. Vermijd te specifieke niche-beroepen met een kleine populatie, tenzij er geen beter alternatief is. Baseer de keuze op reeel overlappende kernvaardigheden, niet alleen op de sector of werkomgeving van de oorspronkelijke vacature (dus niet automatisch alleen beroepen uit dezelfde branche zoals "zorg" of "ziekenhuis" als de vacature daar toevallig speelt, tenzij die branche relevant is voor de skill-overlap zelf).
 
 Gebruik nooit een liggend streepje (em dash, "—") in je tekst. Gebruik gewone punten en komma's.
 
-Geef als allerlaatste bericht uitsluitend geldige JSON terug. Begin dat laatste bericht direct met het teken { en eindig met het teken }. Voeg geen inleidende zin toe zoals "Ik heb nu..." of "Hier is de analyse", geen markdown-codeblokken, geen tekst erna. Structuur:
+Geef uitsluitend geldige JSON terug. Begin direct met het teken { en eindig met het teken }. Geen markdown-codeblokken, geen tekst ervoor of erna. Structuur:
 
 {
   "functietitel": "korte herkenbare titel van de functie",
@@ -37,9 +35,7 @@ Geef als allerlaatste bericht uitsluitend geldige JSON terug. Begin dat laatste 
       "percentage": 82,
       "uitleg": "één korte zin (max 15 woorden) waarom de skills overlappen en waarom dit kansrijk is voor werving",
       "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'",
-      "overstap_type": "coaching of opleiding",
-      "cursus": "naam + aanbieder van een echt bestaande cursus/opleiding, alleen invullen bij overstap_type opleiding en alleen als via websearch gevonden, anders leeg",
-      "cursus_url": "de directe URL van die cursus/opleiding zoals gevonden via websearch, anders leeg"
+      "overstap_type": "coaching of opleiding"
     }
   ],
   "transferable_verrassend": [
@@ -65,9 +61,8 @@ ${vacatureText}
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 4000,
+        max_tokens: 2500,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }],
       }),
     });
 
