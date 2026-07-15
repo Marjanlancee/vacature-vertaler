@@ -1,5 +1,5 @@
 export const config = {
-  maxDuration: 60,
+  maxDuration: 120,
 };
 
 export default async function handler(req, res) {
@@ -67,7 +67,7 @@ ${vacatureText}
         model: "claude-sonnet-4-6",
         max_tokens: 4000,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }],
       }),
     });
 
