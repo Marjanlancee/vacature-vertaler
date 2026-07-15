@@ -34,15 +34,13 @@ Geef uitsluitend geldige JSON terug. Begin direct met het teken { en eindig met 
       "beroep": "naam ander beroep, bij voorkeur met een substantiele beroepsbevolking in Nederland",
       "percentage": 82,
       "uitleg": "één korte zin (max 15 woorden) waarom de skills overlappen en waarom dit kansrijk is voor werving",
-      "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'",
-      "overstap_type": "coaching of opleiding",
-      "overstap_uitleg": "één korte zin (max 15 woorden) die aangeeft welke kennis of vaardigheid de coaching of opleiding moet dekken"
+      "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'"
     }
   ],
   "transferable_verrassend": [
     { "zelfde structuur als hierboven, maar 4 beroepen uit een heel ander vakgebied die toch verrassend sterk overlappen in kernvaardigheden, ook hier bij voorkeur met een redelijke beroepsbevolking" }
   ],
-  "cta_tekst": "tekst van max 60 woorden, informele directe toon. Begin met een pakkende zin (max 20 woorden) die iets herkenbaars uit de vacature verbindt aan hoeveel precisie het kost om potentiele kandidaten uit heel andere vakgebieden te vinden. Laat die eerste zin daarna letterlijk gevolgd worden door exact deze zin: NLwerktaanwerk heeft een kosteloos handig tooltje die jouw vacature herschrijft voor een veel bredere doelgroep, en helpt je ook op weg met ontwikkelpaden binnen jouw branche. Stuur een mailtje naar de regisseur."
+  "cta_tekst": "tekst opgebouwd uit exact deze vier onderdelen achter elkaar. Deel 1: Wist je dat [kies hier een van de verrassende transferable beroepen uit transferable_verrassend] verrassend dicht bij deze functie zit? Deel 2 (altijd letterlijk): Dat kost precisie om te ontdekken. Deel 3 (altijd letterlijk): NLwerktaanwerk heeft een handig tooltje (ook gratis) die jouw vacature herschrijft voor een veel bredere doelgroep, en helpt je ook op weg met ontwikkelpaden binnen jouw branche. Deel 4 (altijd letterlijk): Vraag deze op!"
 }
 
 Geef exact 4 items in transferable_dichtbij (beroepen die logisch dicht bij de functie liggen) en exact 4 items in transferable_verrassend (onverwachte beroepen uit een ander vakgebied met verrassend veel skill-overlap, zoals een nagelstyliste met de handvaardigheid en precisie van een lasser). Sorteer beide lijsten van hoog naar laag percentage. De werkenden_nl schattingen zijn indicatief, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
