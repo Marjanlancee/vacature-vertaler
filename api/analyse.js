@@ -47,7 +47,7 @@ Geef uitsluitend geldige JSON terug. Begin direct met het teken { en eindig met 
       "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'"
     }
   ],
-  "cta_tekst": "tekst opgebouwd uit exact deze vier onderdelen achter elkaar. Deel 1: Wist je dat [kies hier een van de verrassende transferable beroepen uit transferable_verrassend] verrassend dicht bij deze functie zit? Deel 2 (altijd letterlijk): Dat kost precisie om te ontdekken. Deel 3 (altijd letterlijk): NLwerktaanwerk heeft een handig tooltje (ook gratis) die jouw vacature herschrijft voor een veel bredere doelgroep, en helpt je ook op weg met ontwikkelpaden binnen jouw branche. Deel 4 (altijd letterlijk): Vraag deze op!"
+  "cta_tekst": "tekst opgebouwd uit exact vier onderdelen achter elkaar. Deel 1: Wist je dat [kies hier een van de verrassende transferable beroepen uit transferable_verrassend] verrassend dicht bij deze functie zit? Deel 2: een korte zin (max 8 woorden) die past bij dat specifieke beroep en aansluit op waarom die match niet voor de hand ligt, bijvoorbeeld Dat kost precisie om te ontdekken bij een technisch vakmens, of Dat vind je niet zomaar bij een minder voor de hand liggend beroep, kies zelf iets passends per beroep. Deel 3 (altijd letterlijk): NLwerktaanwerk heeft een handig tooltje (ook gratis) die met een druk op de knop jouw vacature herschrijft voor een veel bredere doelgroep, en scheelt je zo enorm veel tijd. Deel 4 (altijd letterlijk): Vraag deze op!"
 }
 
 Geef exact 4 items in transferable_dichtbij en exact 4 items in transferable_verrassend. Sorteer beide lijsten van hoog naar laag percentage. De werkenden_nl schattingen zijn indicatief, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
