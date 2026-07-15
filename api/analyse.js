@@ -1,3 +1,7 @@
+export const config = {
+  maxDuration: 60,
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Alleen POST toegestaan" });
@@ -13,24 +17,33 @@ export default async function handler(req, res) {
 
   const prompt = `Je bent een arbeidsmarktanalist. Analyseer onderstaande vacaturetekst.
 
-Geef uitsluitend geldige JSON terug, zonder markdown-codeblokken, zonder inleidende tekst. Structuur:
+Gebruik de websearch-tool om voor elk transferable beroep waar "opleiding" bij hoort een bestaande, actuele Nederlandse cursus of opleiding op te zoeken. Verzin nooit een cursusnaam of aanbieder. Als je via websearch niets bruikbaars vindt, laat het veld "cursus" dan leeg.
+
+Gebruik nooit een liggend streepje (em dash, "—") in je tekst. Gebruik gewone punten en komma's.
+
+Geef als allerlaatste bericht uitsluitend geldige JSON terug, zonder markdown-codeblokken, zonder tekst ervoor of erna. Structuur:
 
 {
   "functietitel": "korte herkenbare titel van de functie uit de vacature",
   "hard_skills": ["skill 1", "skill 2", "skill 3", "skill 4", "skill 5"],
   "soft_skills": ["skill 1", "skill 2", "skill 3", "skill 4", "skill 5"],
-  "transferable": [
+  "transferable_dichtbij": [
     {
       "beroep": "naam ander beroep",
-      "percentage": 72,
+      "percentage": 82,
       "uitleg": "één korte zin (max 15 woorden) waarom de skills overlappen",
-      "werkenden_nl": "indicatieve schatting van aantal mensen dat dit beroep in Nederland uitoefent, bv. 'circa 7.000' of 'circa 15.000-20.000'"
+      "werkenden_nl": "indicatieve schatting, bv. 'circa 25.000-35.000'",
+      "overstap_type": "coaching of opleiding",
+      "cursus": "naam + aanbieder van een echt bestaande cursus/opleiding, alleen invullen bij overstap_type opleiding en alleen als via websearch gevonden, anders leeg"
     }
   ],
-  "cta_tekst": "een korte, uitnodigende tekst (max 40 woorden) gericht aan de werkgever, in informele directe toon, die nieuwsgierig maakt naar een gratis tool die de vacature herschrijft zodat deze ook andere doelgroepen aanspreekt. Noem geen bedrijfs- of organisatienaam. Eindig met een uitnodiging om contact op te nemen."
+  "transferable_verrassend": [
+    { "zelfde structuur als hierboven, maar 4 beroepen uit een heel ander vakgebied die toch verrassend sterk overlappen in kernvaardigheden" }
+  ],
+  "cta_tekst": "korte tekst (max 50 woorden), informele directe toon, geen bedrijfsnaam. Noem kort iets herkenbaars uit de vacature, benoem dan dat het uitzoeken van al deze kandidaten veel werk is, en nodig uit tot contact voor een gratis tool die de vacature herschrijft voor bredere doelgroepen."
 }
 
-Geef 2 tot 3 transferable beroepen, gesorteerd van hoog naar laag percentage. Kies beroepen die qua kernvaardigheden echt overlappen maar in een ander vakgebied liggen (zoals bakker -> laadpaalmonteur, vanwege precisie, ritme en handvaardigheid). Gebruik altijd "circa" of een bandbreedte bij werkenden_nl, dit zijn indicatieve schattingen, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
+Geef exact 4 items in transferable_dichtbij (beroepen die logisch dicht bij de functie liggen) en exact 4 items in transferable_verrassend (onverwachte beroepen uit een ander vakgebied met verrassend veel skill-overlap, zoals een nagelstyliste met de handvaardigheid en precisie van een lasser). Sorteer beide lijsten van hoog naar laag percentage. De werkenden_nl schattingen zijn indicatief, geen officiële CBS-cijfers, want CBS-beroepsgroepen zijn vaak breder dan één specifiek beroep.
 
 Vacaturetekst:
 """
@@ -47,8 +60,9 @@ ${vacatureText}
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1000,
+        max_tokens: 4000,
         messages: [{ role: "user", content: prompt }],
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
       }),
     });
 
@@ -59,8 +73,8 @@ ${vacatureText}
     }
 
     const data = await response.json();
-    const textBlock = (data.content || []).find((b) => b.type === "text");
-    const raw = (textBlock?.text || "").trim();
+    const textBlocks = (data.content || []).filter((b) => b.type === "text");
+    const raw = (textBlocks[textBlocks.length - 1]?.text || "").trim();
     const clean = raw.replace(/^```json\s*|^```\s*|```$/gm, "").trim();
     const parsed = JSON.parse(clean);
 
