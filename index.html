@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vacature-skillsanalyse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+  .display { font-family: 'Fraunces', serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  textarea:focus, button:focus-visible { outline: 2px solid #C97A2B; outline-offset: 2px; }
+  .fade-in { animation: fadeIn 0.5s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+const ACCENT = "#C97A2B";
+const INK = "#16233A";
+const PAPER = "#F7F5F0";
+const SAGE = "#4F7863";
+
+function Icon({ name, size = 16, color = "currentColor", style = {} }) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (ref.current && window.lucide) {
+      ref.current.innerHTML = "";
+      const svg = window.lucide.createElement(window.lucide.icons[name]);
+      if (svg) {
+        svg.setAttribute("width", size);
+        svg.setAttribute("height", size);
+        svg.setAttribute("stroke", color);
+        ref.current.appendChild(svg);
+      }
+    }
+  }, [name, size, color]);
+  return <span ref={ref} style={{ display: "inline-flex", ...style }} />;
+}
+
+function SkillBlock({ title, items, color }) {
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "18px 20px" }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+        {title}
+      </div>
+      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 7 }}>
+        {items?.map((s, i) => (
+          <li key={i} style={{ fontSize: 14.5, display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <span style={{ color, marginTop: 5, fontSize: 8 }}>●</span>
+            {s}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function App() {
+  const [vacatureText, setVacatureText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+
+  async function analyseer() {
+    if (!vacatureText.trim()) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const response = await fetch("/api/analyse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vacatureText }),
+      });
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error(errBody.error || "Analyse mislukt");
+      }
+      const parsed = await response.json();
+      setResult(parsed);
+    } catch (e) {
+      setError("Er ging iets mis bij het analyseren. Probeer het opnieuw.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ background: PAPER, minHeight: "100vh", color: INK }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 20px 80px" }}>
+        <header style={{ marginBottom: 36 }}>
+          <div className="mono" style={{ fontSize: 12, letterSpacing: "0.08em", color: ACCENT, marginBottom: 10, textTransform: "uppercase" }}>
+            Vacature-skillsanalyse
+          </div>
+          <h1 className="display" style={{ fontSize: "clamp(28px, 5vw, 40px)", fontWeight: 600, lineHeight: 1.1, margin: 0 }}>
+            Plak je vacature. Zie wie er nog meer geschikt is.
+          </h1>
+          <p style={{ fontSize: 16, lineHeight: 1.6, color: "#4A5568", marginTop: 14, maxWidth: 560 }}>
+            Elke vacature vraagt om skills, geen diploma's. Deze tool laat zien welke skills er echt achter je functie zitten en welke andere beroepen dezelfde mensen aantrekken.
+          </p>
+        </header>
+
+        <textarea
+          value={vacatureText}
+          onChange={(e) => setVacatureText(e.target.value)}
+          placeholder="Plak hier de volledige vacaturetekst..."
+          rows={9}
+          style={{
+            width: "100%",
+            border: "1.5px solid #D8D3C8",
+            borderRadius: 10,
+            padding: 16,
+            fontSize: 15,
+            fontFamily: "inherit",
+            lineHeight: 1.5,
+            resize: "vertical",
+            background: "#fff",
+            color: INK,
+          }}
+        />
+
+        <button
+          onClick={analyseer}
+          disabled={loading || !vacatureText.trim()}
+          style={{
+            marginTop: 14,
+            background: loading ? "#B8895A" : ACCENT,
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            padding: "13px 24px",
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: loading || !vacatureText.trim() ? "default" : "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            opacity: !vacatureText.trim() ? 0.5 : 1,
+          }}
+        >
+          <Icon name={loading ? "loader-2" : "sparkles"} size={17} color="#fff" style={loading ? { className: "spin" } : {}} />
+          {loading ? "Analyseren..." : "Analyseer vacature"}
+        </button>
+
+        {error && <p style={{ color: "#B03A2E", marginTop: 16, fontSize: 14 }}>{error}</p>}
+
+        {result && (
+          <div className="fade-in" style={{ marginTop: 48 }}>
+            <div className="mono" style={{ fontSize: 12, color: "#8A8478", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
+              Analyse van
+            </div>
+            <h2 className="display" style={{ fontSize: 24, fontWeight: 600, margin: "0 0 28px" }}>
+              {result.functietitel}
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 40 }}>
+              <SkillBlock title="Hard skills" items={result.hard_skills} color={INK} />
+              <SkillBlock title="Soft skills" items={result.soft_skills} color={SAGE} />
+            </div>
+
+            <div style={{ marginBottom: 40 }}>
+              <h3 className="display" style={{ fontSize: 19, fontWeight: 600, marginBottom: 4 }}>
+                Wie kan deze functie nog meer aan?
+              </h3>
+              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 18 }}>
+                Op basis van skill-overlap met andere beroepen.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {result.transferable?.map((t, i) => (
+                  <div key={i} style={{ background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "18px 20px", display: "flex", alignItems: "center", gap: 18 }}>
+                    <div className="mono" style={{ fontSize: 26, fontWeight: 600, color: ACCENT, minWidth: 64, textAlign: "right" }}>
+                      {t.percentage}%
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 16 }}>
+                        <Icon name="arrow-right" size={15} color="#B0AB9E" />
+                        {t.beroep}
+                      </div>
+                      <div style={{ fontSize: 13.5, color: "#6B7280", marginTop: 3 }}>{t.uitleg}</div>
+                    </div>
+                    <div style={{ textAlign: "right", fontSize: 12.5, color: "#8A8478", whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
+                        <Icon name="users" size={13} />
+                        <span className="mono">{t.werkenden_nl}</span>
+                      </div>
+                      <div>werkzaam in NL</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ background: INK, color: PAPER, borderRadius: 12, padding: "26px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+              <Icon name="mail" size={20} color={ACCENT} style={{ marginTop: 3, flexShrink: 0 }} />
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6 }}>{result.cta_tekst}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
