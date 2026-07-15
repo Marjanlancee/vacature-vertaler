@@ -100,17 +100,6 @@ function MatchCard({ t }) {
           <div>werkzaam in NL</div>
         </div>
       </div>
-      {t.overstap_type && (
-        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #F0EEE7", fontSize: 13, display: "flex", alignItems: "flex-start", gap: 8 }}>
-          <Icon name={t.overstap_type === "opleiding" ? "graduation-cap" : "handshake"} size={14} color={SAGE} style={{ marginTop: 2 }} />
-          <span>
-            <strong style={{ color: SAGE }}>
-              {t.overstap_type === "opleiding" ? "Opleiding nodig" : "Coaching op de vloer"}
-            </strong>
-            {t.overstap_uitleg ? `: ${t.overstap_uitleg}` : ""}
-          </span>
-        </div>
-      )}
     </div>
   );
 }
@@ -254,10 +243,6 @@ function App() {
                 {result.transferable_verrassend?.map((t, i) => (
                   <MatchCard key={i} t={t} />
                 ))}
-              </div>
-
-              <div style={{ marginTop: 20, background: "#fff", border: "1px solid #E5E1D8", borderRadius: 10, padding: "16px 18px", fontSize: 13.5, lineHeight: 1.6, color: "#4A5568" }}>
-                Omdat de arbeidsmarkt structureel krap is, loont het om breder te kijken naar kandidaten uit andere vakgebieden. Zij moeten daarvoor vaak nog wel een cursus of training volgen, daar zijn onder andere de ontwikkelpaden op <a href="https://www.leeroverzicht.nl" target="_blank" rel="noopener noreferrer" style={{ color: SAGE, textDecoration: "underline" }}>Leeroverzicht.nl</a> voor. Vaak kunnen mensen ook veel op de werkvloer leren, en er zijn regelmatig subsidies beschikbaar. Neem contact op met de regisseur en vraag om advies.
               </div>
             </div>
 
